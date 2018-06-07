@@ -16,7 +16,7 @@ async function setup () {
     }
   ])
 
-  if(!answer.setup){
+  if (!answer.setup) {
     return console.log('Database not destroyed')
   }
 
@@ -38,7 +38,7 @@ async function setup () {
 }
 
 function handleFatalError (err) {
-  console.error(err.message)
+  console.error(`${chalk.red('[fatal error]')} ${err.message}`)
   console.error(err.stack)
   process.exit(1)
 }
