@@ -25,7 +25,7 @@ let connectedArgs = {
 }
 
 let usernameArgs = {
-  where: { user: 'miorrowls', connected: true }
+  where: { username: 'miorrowls', connected: true }
 }
 
 let uuidArgs = {
@@ -35,7 +35,7 @@ let uuidArgs = {
 let newAgent = {
   uuid: '123-123-123',
   name: 'miorrowls',
-  user: 'miorrowls',
+  username: 'miorrowls',
   hostname: 'test',
   pid: 0,
   connected: false

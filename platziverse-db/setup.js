@@ -7,18 +7,28 @@ const db = require('./')
 
 const prompt = inquirer.createPromptModule()
 
-async function setup () {
-  const answer = await prompt([
-    {
-      type: 'confirm',
-      name: 'setup',
-      message: 'This will destroy your database, are you sure?'
-    }
-  ])
+let flagY = false
 
-  if (!answer.setup) {
-    return console.log('Database not destroyed')
+process.argv.forEach(e => {
+  if(e === '--yes'){
+    flagY = true
   }
+})
+
+async function setup () {
+  if(!flagY){
+    const answer = await prompt([
+      {
+        type: 'confirm',
+        name: 'setup',
+        message: 'This will destroy your database, are you sure?'
+      }
+    ])
+
+    if (!answer.setup) {
+      return console.log('Database not destroyed')
+    }
+  }  
 
   const config = {
     database: process.env.DB_NAME || 'platziverse',

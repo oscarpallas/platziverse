@@ -33,7 +33,7 @@ let agentId = agentFixtures.findByUuid(uuid).id
 
 let agentIdArgs = {
   where: { agentId }
-} 
+}
 
 let metricUuidArgs = {
   attributes: [ 'type' ],
@@ -50,19 +50,19 @@ let metricUuidArgs = {
 
 let metricTypeUuidArgs = {
   attributes: ['id', 'type', 'value', 'createdAt'],
-      where: {
-        type
-      },
-      limit: 20,
-      order: ['createdAt', 'DESC'],
-      include: [{
-        attributes: [],
-        model: AgentStub,
-        where: {
-          uuid
-        }
-      }],
-      raw: true
+  where: {
+    type
+  },
+  limit: 20,
+  order: ['createdAt', 'DESC'],
+  include: [{
+    attributes: [],
+    model: AgentStub,
+    where: {
+      uuid
+    }
+  }],
+  raw: true
 }
 
 let typeArgs = {
@@ -128,7 +128,6 @@ test.serial('Setup', t => {
 })
 
 test.serial('Metric#findByAgentUuid', async t => {
-
   let metrics = await db.Metric.findByAgentUuid(uuid)
 
   t.true(MetricStub.findAll.called, 'findAll should be called on model')
@@ -139,7 +138,6 @@ test.serial('Metric#findByAgentUuid', async t => {
 })
 
 test.serial('Metric#findByTypeAgentUuid', async t => {
-
   let metric = await db.Metric.findByTypeAgentUuid(type, uuid)
 
   t.true(MetricStub.findAll.called, 'findAll should be called on model')
@@ -161,4 +159,3 @@ test.serial('Metric#create', async t => {
 
   t.deepEqual(metric, newMetric, 'Metric should be the same')
 })
-

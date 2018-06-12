@@ -14,7 +14,7 @@ const metric = {
 
 const metrics = [
   metric,
-  extend(metric, { id: 2, type: 'metricTest', agentId: 3, value: 30 , agent: agentFixtures.findById(3) }),
+  extend(metric, { id: 2, type: 'metricTest', agentId: 3, value: 30, agent: agentFixtures.findById(3) }),
   extend(metric, { id: 3, type: 'metricProve', value: 20 }),
   extend(metric, { id: 4, type: 'metricFake', agentId: 2, agent: agentFixtures.findById(2) })
 ]
