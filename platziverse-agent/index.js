@@ -94,7 +94,7 @@ class PlatziverseAgent extends EventEmitter {
         switch (topic) {
           case 'agent/connected':
           case 'agent/disconnected':
-          case 'agent/mesaage':
+          case 'agent/message':
             broadcast = payload && payload.agent && payload.agent.uuid !== this._agentId
             break
         }

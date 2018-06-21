@@ -26,13 +26,13 @@ agent.connect()
 
 // This agent only
 agent.on('connected', handler)
-agent.on('disconnected', handler)
 agent.on('message', handler)
+agent.on('disconnected', handler)
 
 // Other Agents
 agent.on('agent/connected', handler)
-agent.on('agent/disconnected', handler)
 agent.on('agent/message', handler)
+agent.on('agent/disconnected', handler)
 
 function handler (payload) {
   console.log(payload)

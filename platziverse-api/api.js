@@ -3,6 +3,8 @@
 const debug = require('debug')('platziverse:api:routes')
 const express = require('express')
 const asyncify = require('express-asyncify')
+const auth = require('express-jwt')
+const guard = require('express-jwt-permissions')()
 const db = require('platziverse-db')
 
 const config = require('./config')
@@ -13,7 +15,7 @@ let services, Agent, Metric
 
 api.use('*', async (req, res, next) => {
   if (!services) {
-    debug(`Connecting to databse`)
+    debug('Connecting to database')
     try {
       services = await db(config.db)
     } catch (e) {
@@ -26,20 +28,33 @@ api.use('*', async (req, res, next) => {
   next()
 })
 
-api.get('/agents', async (req, res, next) => {
+api.get('/agents', auth(config.auth), async (req, res, next) => {
+  debug('A request has come to /agents')
+
+  const { user } = req
+
+  if (!user || !user.username) {
+    return next(new Error('Not authorized'))
+  }
+
   let agents = []
   try {
-    agents = await Agent.findConnected()
+    if (user.admin) {
+      agents = await Agent.findConnected()
+    } else {
+      agents = await Agent.findByUsername(user.username)
+    }
   } catch (e) {
     return next(e)
   }
+
   res.send(agents)
 })
 
 api.get('/agent/:uuid', async (req, res, next) => {
   const { uuid } = req.params
 
-  debug(`Request to /agent/${uuid}`)
+  debug(`request to /agent/${uuid}`)
 
   let agent
   try {
@@ -55,12 +70,12 @@ api.get('/agent/:uuid', async (req, res, next) => {
   res.send(agent)
 })
 
-api.get('/metrics/:uuid', async (req, res, next) => {
+api.get('/metrics/:uuid', auth(config.auth), guard.check(['metrics:read']), async (req, res, next) => {
   const { uuid } = req.params
 
-  let metrics = []
+  debug(`request to /metrics/${uuid}`)
 
-  debug(`Request to /metrics/${uuid}`)
+  let metrics = []
   try {
     metrics = await Metric.findByAgentUuid(uuid)
   } catch (e) {
@@ -75,11 +90,11 @@ api.get('/metrics/:uuid', async (req, res, next) => {
 })
 
 api.get('/metrics/:uuid/:type', async (req, res, next) => {
-  const {uuid, type} = req.params
+  const { uuid, type } = req.params
+
+  debug(`request to /metrics/${uuid}/${type}`)
 
   let metrics = []
-
-  debug(`Request to /metrics/${uuid}/${type}`)
   try {
     metrics = await Metric.findByTypeAgentUuid(type, uuid)
   } catch (e) {
@@ -87,7 +102,7 @@ api.get('/metrics/:uuid/:type', async (req, res, next) => {
   }
 
   if (!metrics || metrics.length === 0) {
-    return next(new Error(`Metrics ${type} not found for agent with uuid ${uuid}`))
+    return next(new Error(`Metrics (${type}) not found for agent with uuid ${uuid}`))
   }
 
   res.send(metrics)
